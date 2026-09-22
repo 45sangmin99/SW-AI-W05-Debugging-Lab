@@ -50,7 +50,10 @@ static void parse_headers(char *text, Headers *h) {
         char *colon = strchr(line, ':');   
 
         if(colon) *colon = '\0';
-        else colon = line;
+        else {
+            printf("invalid header: %s\n", line);
+            continue;
+        }
         char *key = line;
         char *val = skip_ws(colon + 1);
 
