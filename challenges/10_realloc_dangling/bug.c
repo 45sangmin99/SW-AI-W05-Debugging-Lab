@@ -61,7 +61,11 @@ static void eb_init(EditBuffer *e) {
 }
 
 static void eb_snapshot(EditBuffer *e) {
-    if (e->undo_n < MAX_UNDO) e->undo[e->undo_n++] = e->data;
+    // if (e->undo_n < MAX_UNDO) e->undo[e->undo_n++] = e->data;
+    if (e->undo_n < MAX_UNDO){
+        e->undo[e->undo_n] = malloc(sizeof(int));
+        memcpy(e->undo[e->undo_n++],e->data,sizeof(int));
+    }
 }
 
 static void eb_grow(EditBuffer *e, size_t need) {
