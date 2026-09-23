@@ -42,7 +42,7 @@
  *   tip 1. 저장 위치가 다르다. 전역/static 은 프로그램 내내 사는 .bss/.data 영역에,
  *          지역 변수는 함수가 실행되는 동안만 사는 '스택'에 놓인다.
  *   tip 2. 수명이 다르다. 전역은 프로그램 시작~끝까지 유지되지만, 지역은 함수가 return
- *          하면 사라진다. → 그 주소를 함수 밖으로 돌려주면 7번(stack use-after-return)!
+ *          하면 사라진다. → 그 주소를 함수 밖으로 돌려주면 7번(stㅏㄷack use-after-return)!
  *   tip 3. 초기화가 다르다. 전역/static 은 자동으로 0 으로 초기화되지만(그래서 .bss),
  *          지역 변수는 초기화하지 않으면 쓰레기 값이다(8번 챌린지).
  *   생각해보기: 여러 번 호출돼도 같은 저장소를 계속 나눠 쓰려면(커서 arena_off 유지)
@@ -51,6 +51,9 @@ static unsigned char arena[ARENA_SIZE];    /* 전역(.bss) 아레나 */
 static size_t arena_off = 0;
 
 static void *arena_alloc(size_t n) {
+    //---추가---
+    if (arena_off + n > ARENA_SIZE)return NULL;
+    //---------
     void *p = &arena[arena_off];
     arena_off += n;
     return p;
@@ -59,6 +62,9 @@ static void *arena_alloc(size_t n) {
 static char *intern(const char *s) {
     size_t n = strlen(s) + 1;
     char *dst = arena_alloc(n);
+    //---추가---
+    if(!dst)return NULL;
+    //---------
     memcpy(dst, s, n);                      /* 경계를 넘은 위치면 여기서 크래시 */
     return dst;
 }
@@ -77,6 +83,12 @@ int main(void) {
         char buf[32];
         snprintf(buf, sizeof buf, "%s-%d", words[i % nwords], i);
         last = intern(buf);                 
+        //---추가---
+        if(!last){
+            printf("Arena is full : %s \n", buf);
+            break;
+        }
+        //---------
         total += (long)strlen(last);
     }
 
