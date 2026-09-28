@@ -45,15 +45,23 @@
 #include <stdlib.h>
 #include <stdint.h> // 수정할 때 SIZE_MAX 로 곱셈 오버플로를 검사하라고 미리 넣어 둔 헤더
 
+// typedef struct {
+//     int width;
+//     int height;
+//     int channels;
+//     int nbytes;              
+//     unsigned char *px;
+// } Image;
+
 typedef struct {
-    int width;
-    int height;
-    int channels;
-    int nbytes;              
+    size_t width;
+    size_t height;
+    size_t channels;
+    size_t nbytes;              
     unsigned char *px;
 } Image;
 
-static Image *image_new(int width, int height, int channels) {
+static Image *image_new(size_t width, size_t height, size_t channels) {
     Image *img = malloc(sizeof *img);
     if (!img) { perror("malloc"); exit(1); }
     img->width = width;
@@ -86,8 +94,11 @@ int main(void) {
      *   생각해보기: 할당은 작게, 쓰기는 크게 → 무슨 일이 벌어질까? 그리고 왜 채널이 4(RGBA)
      *               일 때가 3(RGB)일 때보다 오버플로가 더 쉽게 터질까?
      *               (해결 힌트: 크기 계산을 size_t 로 승격하고, 곱셈 오버플로를 검사한다) */
-    Image *img = image_new(65536, 65536, 4);
-    printf("allocated nbytes(int)=%d for %dx%d x%d\n",
+    // Image *img = image_new(65536, 65536, 4);
+    // printf("allocated nbytes(int)=%d for %dx%d x%d\n",
+    //        img->nbytes, img->width, img->height, img->channels);
+    Image *img = image_new(24000, 24000, 4);
+    printf("allocated nbytes(int)=%zu for %zux%zu x%zu\n",
            img->nbytes, img->width, img->height, img->channels);
 
     image_fill(img, 0xFF);                       
