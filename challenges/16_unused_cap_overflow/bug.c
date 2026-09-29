@@ -41,6 +41,11 @@
 
 
 static void append_field(char *buf, size_t cap, size_t *len, const char *field, char sep) {
+    //추가
+    if (cap < *len + strlen(field) + 1){
+        fprintf(stderr, "record buffer overflow detected\n");
+        return;
+    }
     if (*len > 0) {
         buf[(*len)++] = sep;             
     }
