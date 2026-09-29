@@ -80,6 +80,8 @@ int main(void) {
 
     for (int k = 200000; k < 600000; k++) hist_add(&h, k);
 
+    // 추가
+    hot = &h.data[100000];
     hot->count += 1000;
 
     printf("hot=%ld total=%ld len=%zu\n", hot->count, hist_total(&h), h.len);
